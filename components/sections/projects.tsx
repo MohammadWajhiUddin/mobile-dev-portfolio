@@ -1,10 +1,11 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
-import { ExternalLink, Code2, Sparkles } from "lucide-react"
+import { Eye, Code2, Sparkles, X, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { projects } from "@/lib/data/projects"
 
 const containerVariants = {
@@ -22,7 +23,102 @@ const cardVariants = {
   },
 }
 
+function DetailsModal({
+  project,
+  onClose,
+}: {
+  project: (typeof projects)[number]
+  onClose: () => void
+}) {
+  const [current, setCurrent] = useState(0)
+  const images = project.detailsImages || (project.image ? [project.image] : [])
+
+  const next = () => setCurrent((p) => (p + 1) % images.length)
+  const prev = () => setCurrent((p) => (p - 1 + images.length) % images.length)
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="relative max-h-[90vh] max-w-4xl overflow-hidden rounded-2xl bg-card"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-border px-5 py-3">
+          <h3 className="font-semibold">{project.title}</h3>
+          <button onClick={onClose} className="rounded-lg p-1 transition-colors hover:bg-muted">
+            <X className="size-5" />
+          </button>
+        </div>
+
+        <div className="relative flex items-center bg-black/90">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current}
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -40 }}
+              transition={{ duration: 0.2 }}
+              className="relative flex aspect-[9/19] h-[75vh] items-center justify-center"
+            >
+              <Image
+                src={images[current]}
+                alt={`${project.title} screenshot ${current + 1}`}
+                fill
+                className="object-contain"
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={prev}
+                className="absolute left-2 rounded-full bg-background/60 p-2 backdrop-blur transition-colors hover:bg-background/90"
+              >
+                <ChevronLeft className="size-5" />
+              </button>
+              <button
+                onClick={next}
+                className="absolute right-2 rounded-full bg-background/60 p-2 backdrop-blur transition-colors hover:bg-background/90"
+              >
+                <ChevronRight className="size-5" />
+              </button>
+            </>
+          )}
+        </div>
+
+        {images.length > 1 && (
+          <div className="flex justify-center gap-1.5 border-t border-border px-5 py-3">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`h-1.5 rounded-full transition-all ${
+                  i === current ? "w-6 bg-primary" : "w-1.5 bg-muted-foreground/30"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
+  )
+}
+
 export function Projects() {
+  const [selected, setSelected] = useState<string | null>(null)
+  const selectedProject = projects.find((p) => p.title === selected)
+
   return (
     <section id="projects" className="relative overflow-hidden py-24 px-4 sm:py-32">
       <div className="absolute inset-0 -z-10">
@@ -66,6 +162,7 @@ export function Projects() {
         >
           {projects.map((project, i) => {
             const hasImage = !!project.image
+            const hasDetails = !!project.detailsImages?.length || !!project.image
             return (
               <motion.div
                 key={project.title}
@@ -140,15 +237,14 @@ export function Projects() {
                     ))}
                   </div>
                   <div className="flex gap-3">
-                    {project.liveUrl && (
+                    {hasDetails && (
                       <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <Button
                           size="sm"
-                          nativeButton={false}
-                          render={<a href={project.liveUrl} target="_blank" rel="noopener noreferrer" />}
+                          onClick={() => setSelected(project.title)}
                         >
-                          <ExternalLink className="mr-1.5 size-3.5" />
-                          Live Demo
+                          <Eye className="mr-1.5 size-3.5" />
+                          View Details
                         </Button>
                       </motion.div>
                     )}
@@ -172,6 +268,15 @@ export function Projects() {
           })}
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {selectedProject && (
+          <DetailsModal
+            project={selectedProject}
+            onClose={() => setSelected(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   )
 }
