@@ -25,7 +25,7 @@ export const projects: Project[] = [
       "/mmart/4.png",
       "/mmart/5.png",
     ],
-    tags: ["Flutter", "Firebase", "Stripe"],
+    tags: ["React Native", "Firebase", "Stripe"],
     githubUrl: "#",
   },
   {
@@ -52,7 +52,7 @@ export const projects: Project[] = [
       "A coffee ordering app with menu browsing, customization options, loyalty rewards, and real-time order status updates.",
     icon: Coffee,
     gradient: "from-amber-700 to-amber-500",
-    tags: ["Flutter", "Firebase", "Cloud Functions"],
+    tags: ["React Native", "Firebase", "Cloud Functions"],
     githubUrl: "#",
   },
   {
