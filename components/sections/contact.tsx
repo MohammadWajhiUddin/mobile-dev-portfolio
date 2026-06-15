@@ -1,11 +1,13 @@
 "use client"
 
-import { useState, type FormEvent } from "react"
-import { Code2, Link, MessageCircle, Send, Mail, MapPin, Sparkles } from "lucide-react"
+import { useState, useRef, type FormEvent } from "react"
+import { Code2, Link, MessageCircle, Send, Mail, MapPin, Sparkles, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { motion } from "framer-motion"
+
+const WEB3FORMS_KEY = "268ec26b-56cb-4f26-a598-b5102937178c"
 
 const socialLinks = [
   { label: "GitHub", href: "#", icon: Code2, color: "hover:text-[#6e5494]" },
@@ -14,12 +16,36 @@ const socialLinks = [
 ]
 
 export function Contact() {
-  const [submitted, setSubmitted] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
-    setTimeout(() => setSubmitted(false), 3000)
+    setStatus("loading")
+
+    const form = formRef.current
+    if (!form) return
+
+    const data = new FormData(form)
+    data.append("access_key", WEB3FORMS_KEY)
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: data,
+      })
+      const json = await res.json()
+      if (json.success) {
+        setStatus("success")
+        form.reset()
+      } else {
+        setStatus("error")
+      }
+    } catch {
+      setStatus("error")
+    }
+
+    setTimeout(() => setStatus("idle"), 4000)
   }
 
   return (
@@ -135,6 +161,7 @@ export function Contact() {
           </motion.div>
 
           <motion.form
+            ref={formRef}
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -156,7 +183,7 @@ export function Contact() {
                     Name
                   </label>
                   <motion.div whileFocus={{ scale: 1.01 }}>
-                    <Input id="name" placeholder="John Doe" required />
+                    <Input id="name" name="name" placeholder="John Doe" required />
                   </motion.div>
                 </div>
                 <div className="space-y-2">
@@ -164,7 +191,7 @@ export function Contact() {
                     Email
                   </label>
                   <motion.div whileFocus={{ scale: 1.01 }}>
-                    <Input id="email" type="email" placeholder="john@example.com" required />
+                    <Input id="email" name="email" type="email" placeholder="john@example.com" required />
                   </motion.div>
                 </div>
               </div>
@@ -173,12 +200,14 @@ export function Contact() {
                   Message
                 </label>
                 <motion.div whileFocus={{ scale: 1.01 }}>
-                  <Textarea id="message" placeholder="Tell me about your project..." rows={5} required />
+                  <Textarea id="message" name="message" placeholder="Tell me about your project..." rows={5} required />
                 </motion.div>
               </div>
               <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
-                <Button type="submit" size="lg" className="w-full animate-pulse-glow">
-                  {submitted ? (
+                <Button type="submit" size="lg" className="w-full animate-pulse-glow" disabled={status === "loading"}>
+                  {status === "loading" ? (
+                    <Loader2 className="size-5 animate-spin" />
+                  ) : status === "success" ? (
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -186,6 +215,8 @@ export function Contact() {
                     >
                       Message sent! ✨
                     </motion.span>
+                  ) : status === "error" ? (
+                    <span>Something went wrong</span>
                   ) : (
                     <>
                       Send Message
