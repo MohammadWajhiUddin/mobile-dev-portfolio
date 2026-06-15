@@ -7,6 +7,26 @@ export interface Experience {
 
 export const experiences: Experience[] = [
   {
+    company: "Zaytech",
+    role: "Lead AI Mobile Application Developer",
+    duration: "2025 — Present",
+    achievements: [
+      "Leading AI-powered mobile application development initiatives",
+      "Implementing cutting-edge AI/ML features in mobile platforms",
+      "Mentoring development team on best practices and emerging technologies",
+    ],
+  },
+  {
+    company: "QATSCO UK",
+    role: "Senior Mobile Application Developer",
+    duration: "2022 — 2025",
+    achievements: [
+      "Architected and delivered multiple enterprise-grade mobile applications",
+      "Led mobile development team ensuring code quality and project delivery",
+      "Implemented performance optimization reducing app load time by 35%",
+    ],
+  },
+  {
     company: "TechNova Labs",
     role: "Senior Mobile Developer",
     duration: "2023 — Present",
