@@ -26,30 +26,22 @@ export const experiences: Experience[] = [
       "Implemented performance optimization reducing app load time by 35%",
     ],
   },
-  {
-    company: "TechNova Labs",
-    role: "Senior Mobile Developer",
-    duration: "2023 — Present",
+
+   {
+    company: "NCBC HEC SZABIST",
+    role: "Mobile Application Developer",
+    duration: "2020 — 2022",
     achievements: [
-      "Architected and launched 3 cross-platform apps serving 500K+ combined users",
-      "Reduced app bundle size by 40% through code splitting and lazy loading",
-      "Led a team of 5 developers, implementing CI/CD pipelines and code review practices",
+      "Designed and developed cross-platform mobile applications using React Native",
+      "Collaborated with backend teams to integrate RESTful APIs",
+      "Conducted user testing and implemented feedback to enhance app usability",
     ],
   },
+
   {
-    company: "AppForge Studios",
-    role: "Mobile Developer",
-    duration: "2021 — 2023",
-    achievements: [
-      "Built 10+ production-grade mobile apps using Flutter and React Native",
-      "Integrated RESTful APIs and GraphQL endpoints for real-time data sync",
-      "Achieved 98% crash-free rate through comprehensive testing and performance monitoring",
-    ],
-  },
-  {
-    company: "Digital Boost Inc.",
+    company: "PlanZ.",
     role: "Junior Developer",
-    duration: "2019 — 2021",
+    duration: "2019 — 2020",
     achievements: [
       "Developed responsive UI components and implemented state management with Riverpod",
       "Collaborated with design team to create pixel-perfect, accessible interfaces",
